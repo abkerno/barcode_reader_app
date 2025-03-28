@@ -1,32 +1,54 @@
-name: Flutter APK Build
+name: 🚀 Flutter CI/CD Pipeline (APK & AAB)
 
 on:
   push:
     branches:
-      - main  # Change to your branch if needed
+      - main  # Change if needed
+  pull_request:
+    branches:
+      - main
+  workflow_dispatch:  # Allows manual trigger
 
 jobs:
   build:
-    name: Build APK
+    name: 🔨 Build APK & AAB
     runs-on: ubuntu-latest
 
     steps:
-      - name: Checkout repository
+      - name: 📥 Checkout Repository
         uses: actions/checkout@v3
 
-      - name: Setup Flutter
+      - name: 🚀 Setup Flutter
         uses: subosito/flutter-action@v2
         with:
-          flutter-version: '3.19.3'  # Update to your Flutter version
+          flutter-version: '3.19.3'  # Update if necessary
+          cache: true  # Enables caching for faster builds
 
-      - name: Install dependencies
+      - name: 📦 Install Dependencies
         run: flutter pub get
 
-      - name: Build APK
+      - name: 🔍 Analyze & Check Formatting
+        run: |
+          flutter analyze
+          flutter format --set-exit-if-changed .
+
+      - name: 🔨 Build Release APK
         run: flutter build apk --release
 
-      - name: Upload APK
+      - name: 📦 Build App Bundle (AAB)
+        run: flutter build appbundle --release
+
+      - name: 📂 Upload APK Artifact
         uses: actions/upload-artifact@v3
         with:
           name: release-apk
           path: build/app/outputs/flutter-apk/app-release.apk
+
+      - name: 📂 Upload AAB Artifact
+        uses: actions/upload-artifact@v3
+        with:
+          name: release-aab
+          path: build/app/outputs/bundle/release/app-release.aab
+
+      - name: 🎉 Build Completed Successfully!
+        run: echo "✅ Build completed and artifacts uploaded!"
