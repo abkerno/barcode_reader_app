@@ -3,34 +3,32 @@ name: Build Flutter APK
 on:
   push:
     branches:
-      - main  # Change this if your main branch has a different name
+      - main
   pull_request:
     branches:
       - main
 
 jobs:
   build:
-    name: Build APK
     runs-on: ubuntu-latest
 
     steps:
-      - name: Checkout Repository
-        uses: actions/checkout@v4
+    - name: Checkout repository
+      uses: actions/checkout@v2
 
-      - name: Setup Flutter
-        uses: subosito/flutter-action@v2
-        with:
-          flutter-version: '3.19.3'  # Update to your Flutter version
-          channel: stable
+    - name: Install Flutter
+      uses: subosito/flutter-action@v2
+      with:
+        flutter-version: '3.4.0'  # Update this to your required Dart SDK version
 
-      - name: Install Dependencies
-        run: flutter pub get
+    - name: Install dependencies
+      run: flutter pub get
 
-      - name: Build APK
-        run: flutter build apk --release
+    - name: Build APK
+      run: flutter build apk --release
 
-      - name: Upload APK
-        uses: actions/upload-artifact@v4  # Ensure you have the correct version
-        with:
-          name: release-apk
-          path: build/app/outputs/flutter-apk/app-release.apk
+    - name: Upload APK
+      uses: actions/upload-artifact@v2
+      with:
+        name: app-release.apk
+        path: build/app/outputs/flutter-apk/app-release.apk
